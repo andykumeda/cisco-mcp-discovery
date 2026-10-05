@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+venv/
+
+# Distribution / packaging
+build/
+#dist/
+*.egg-info/
+
+# IDE files
+.vscode/
+.idea/
+
+# Old/obsolete files
+.old/
+
+# Log files
+*.log
+
+.mcpuser_id_rsa
+
+.aider.chat.history.md
+.aider*
+
+# Old backup files
+*.old
+
+# Private operational data and synthetic generated output
+.venv/
+hosts
+.env
+*.pem
+*.key
+.mcpuser_id_rsa*
+demo-output/
+command_history.json
+last_topology.json
+topology.drawio
+README.INTERNAL.md

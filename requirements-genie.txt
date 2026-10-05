@@ -1,0 +1,3 @@
+-r requirements.txt
+pyats[library]>=25.6
+genie>=25.6

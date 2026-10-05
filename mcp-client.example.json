@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cisco": {
+      "command": "/absolute/path/cisco-mcp-server/.venv/bin/python",
+      "args": ["/absolute/path/cisco-mcp-server/cisco_mcp_server.py"],
+      "env": {
+        "CISCO_MCP_ENABLE_SSH": "0"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+# Recovery and canonical source
+
+The existing private project previously contained an older portable snapshot dated January 12, 2026. A fuller implementation was recovered from an archived Linux installation. Its seven Python module files match private commit `ecb903d3b3a25ef1e407d897ee10621bbd2d29a5` (January 22 UTC / January 21 Pacific).
+
+The recovered source was consolidated into the existing private project first. This public portfolio repository contains a clean, reviewed source snapshot with fresh Git history. Private Git objects/branches, credentials, host inventory, client configurations, command history and real topology artifacts were not imported. The original archive is preserved. A separate private Git bundle retains the original development history outside the public repository.
+
+Recovered capabilities include LLDP/ARP-assisted discovery, device identity and link merging, and the corrected Draw.io geometry, labels and summary. This public adaptation also changes defaults: live SSH requires opt-in; discovered neighbors require explicit scope; SSH validates host keys; command policy defaults to four discovery queries; outputs use a private data directory; HTML labels are escaped. Per-neighbor ARP mapping and LLDP local-interface extraction were corrected and covered by synthetic tests. The recovered MCP resource handler was adapted to the verified MCP 1.30 SDK return contract and exercised with synthetic discovery data.
+
+Use this repo for future portfolio/demo changes. Do not merge the preserved private history or copy operational data into it. Synthetic verification is not a claim of current live-device, full-topology or Genie compatibility testing. The project remains an independent prototype.

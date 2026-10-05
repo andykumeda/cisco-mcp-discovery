@@ -1,0 +1,33 @@
+# Blocked command patterns (regular expressions)
+# These commands are explicitly denied as they can alter device state.
+^conf\s+.*
+^write\s+.*
+^copy\s+.*
+^clear\s+.*
+^reload\s*.*
+^shutdown\s*.*
+^reset\s+.*
+^delete\s+.*
+^erase\s+.*
+^format\s+.*
+^enable\s*.*
+^disable\s+.*
+^(exit|quit|logout)\s*$
+^login\s+.*
+^terminal\s+.*
+^(un|no\s+)?debug\s+.*
+^test\s+.*
+^(telnet|ssh|rsh)\s+.*
+# NX-OS Specific Commands
+^install\s+.*
+^feature\s+.*
+^no\s+feature\s+.*
+^vpc\s+.*
+^no\s+vpc\s+.*
+^checkpoint\s+.*
+^no\s+checkpoint\s+.*
+^rollback\s+.*
+^no\s+rollback\s+.*
+^run\s+.*
+# Show commands to block
+^show\s+run+.*

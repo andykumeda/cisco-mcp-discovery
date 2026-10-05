@@ -1,0 +1,5 @@
+# Discovery commands only; default deny for all others.
+^show version$
+^show cdp neighbors detail$
+^show lldp neighbors detail$
+^show ip arp$
