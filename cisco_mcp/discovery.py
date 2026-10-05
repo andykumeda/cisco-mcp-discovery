@@ -193,7 +193,6 @@ class DiscoveryEngine:
             else:
                 # Regex fallback for ARP
                 # Format: Protocol  Address          Age (min)  Hardware Addr   Type   Interface
-                # Internet  192.0.2.1           -   cc6a.335c.3c1a  ARPA   GigabitEthernet0
                 matches = re.finditer(r'Internet\s+([0-9\.]+)\s+\S+\s+([0-9a-f\.]+)', res["output"], re.IGNORECASE)
                 for m in matches:
                     ip, mac = m.groups()
