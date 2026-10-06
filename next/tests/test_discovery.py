@@ -156,3 +156,25 @@ def test_discovery_respects_depth_when_full_discovery_is_disabled(tmp_path):
     assert fake_client.calls == ["192.0.2.10", "192.0.2.20"]
     assert topology["metadata"]["depth"] == 1
     assert topology["metadata"]["full_discovery"] is False
+
+
+def test_duplicate_queued_neighbors_do_not_consume_device_budget(tmp_path):
+    path = tmp_path / 'inventory.ini'
+    path.write_text('[iosxe]\nedge-1 ansible_host=192.0.2.10 ansible_user=fixture-user\n')
+    client = FakeDeviceClient(load_inventory(path))
+    client.outputs['192.0.2.20']['show cdp neighbors detail'] = ''
+    client.outputs['192.0.2.10']['show lldp neighbors detail'] = '''
+Local Intf: Gi1/0/1
+System Name: dist-1.example.test
+Management Address: 192.0.2.20
+Port id: Gi1/0/24
+
+Local Intf: Gi1/0/2
+System Name: access-1.example.test
+Management Address: 192.0.2.30
+Port id: Gi1/0/48
+'''
+    engine = DiscoveryEngine(device_client=client, trusted_targets=TrustedTargetStore(tmp_path))
+    topology = engine.run(seed_hosts=['edge-1', '192.0.2.10'], max_devices=3)
+    assert client.calls == ['192.0.2.10', '192.0.2.20', '192.0.2.30']
+    assert len(set(client.calls)) == 3

@@ -57,10 +57,13 @@ class DiscoveryEngine:
             raise InventoryError("Discovery max_devices must be at least one.")
 
         queue: deque[tuple[DeviceTarget, int | None, str, str]] = deque()
+        queued: set[str] = set()
         for seed in seed_hosts:
             target = self.device_client.inventory.resolve(seed)
             remaining_depth = None if full_discovery else depth
-            queue.append((target, remaining_depth, target.name, target.address))
+            if _node_id(target) not in queued:
+                queue.append((target, remaining_depth, target.name, target.address))
+                queued.add(_node_id(target))
 
         nodes: dict[str, dict[str, Any]] = {}
         links: list[dict[str, Any]] = []
@@ -70,6 +73,7 @@ class DiscoveryEngine:
         while queue and len(visited) < max_devices:
             target, remaining_depth, seed_name, seed_address = queue.popleft()
             node_id = _node_id(target)
+            queued.discard(node_id)
             if node_id in visited:
                 continue
             visited.add(node_id)
@@ -153,9 +157,13 @@ class DiscoveryEngine:
                     and len(visited) + len(queue) < max_devices
                 ):
                     discovered_target = self.trusted_targets.resolve(
-                        str(neighbor_address), self.device_client.inventory
+                        neighbor_name, self.device_client.inventory,
+                        address=str(neighbor_address), discovered_from=target.name,
+                        protocol=str(neighbor.get("protocol") or "unknown"),
                     )
-                    if _node_id(discovered_target) not in visited:
+                    discovered_id = _node_id(discovered_target)
+                    if discovered_id not in visited and discovered_id not in queued:
+                        queued.add(discovered_id)
                         queue.append(
                             (
                                 discovered_target,

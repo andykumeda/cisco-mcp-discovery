@@ -84,6 +84,7 @@ class InventoryUpdater:
             host_key = f"{host_key}-1"
         hosts[host_key] = {
             "ansible_host": address,
+            "cisco_mcp_trusted_target_name": name,
             "cisco_mcp_discovered_from_seed": seed_address,
             "cisco_mcp_discovered_seed_name": seed_name,
             "cisco_mcp_discovered_from_host": discovered_from,
@@ -152,6 +153,7 @@ class InventoryUpdater:
             [
                 host_key,
                 f"ansible_host={shlex.quote(address)}",
+                f"cisco_mcp_trusted_target_name={shlex.quote(name)}",
                 f"cisco_mcp_discovered_from_seed={shlex.quote(seed_address)}",
                 f"cisco_mcp_discovered_seed_name={shlex.quote(seed_name)}",
                 f"cisco_mcp_discovered_from_host={shlex.quote(discovered_from)}",

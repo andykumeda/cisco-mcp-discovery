@@ -72,3 +72,25 @@ def test_artifact_store_round_trips_outputs(tmp_path):
     assert loaded_topology["nodes"][0]["id"] == "192.0.2.10"
     assert "Cisco Discovery Report" in store.read_artifact(metadata["run_id"], "report_markdown")
     assert "<mxfile" in store.read_artifact(metadata["run_id"], "drawio_xml")
+
+
+def test_artifact_store_rejects_traversal_and_symlink_escape(tmp_path):
+    import pytest
+    from cisco_mcp_server.exceptions import ArtifactError
+    store = ArtifactStore(tmp_path / 'store')
+    outside = tmp_path / 'outside'
+    outside.mkdir()
+    (outside / 'report.md').write_text('outside sentinel')
+    for run_id in [str(outside), '../../outside', '../outside', 'invalid', None]:
+        with pytest.raises(ArtifactError):
+            store.read_artifact(run_id, 'report_markdown')
+    run_id = '20261006T120000Z-abcdef12'
+    (store.runs_dir / run_id).symlink_to(outside, target_is_directory=True)
+    with pytest.raises(ArtifactError):
+        store.read_artifact(run_id, 'report_markdown')
+    other_id = '20261006T120001Z-abcdef12'
+    run_dir = store.runs_dir / other_id
+    run_dir.mkdir()
+    (run_dir / 'report.md').symlink_to(outside / 'report.md')
+    with pytest.raises(ArtifactError):
+        store.read_artifact(other_id, 'report_markdown')

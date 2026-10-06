@@ -5,6 +5,7 @@ from __future__ import annotations
 import getpass
 import json
 import os
+import re
 import uuid
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -91,15 +92,21 @@ class TrustedTargetStore:
         self._write(records)
         return TrustedTargetRecord(**records[key])
 
-    def resolve(self, host: str, inventory: Inventory) -> DeviceTarget:
+    def resolve(self, host: str, inventory: Inventory, *, address: str | None = None,
+                discovered_from: str | None = None, protocol: str | None = None) -> DeviceTarget:
         records = self._read()
-        record = None
-        for item in records.values():
-            if item["name"] == host or item["address"] == host:
-                record = item
-                break
-        if record is None:
+        candidates = [item for item in records.values()
+                      if (address is None or item["address"] == address)
+                      and (discovered_from is None or item["discovered_from"] == discovered_from)
+                      and (protocol is None or item["protocol"] == protocol)]
+        matches = [item for item in candidates if item["name"] == host]
+        if not matches:
+            matches = [item for item in candidates if item["address"] == (address or host)]
+        if not matches:
             raise InventoryError(f"Host '{host}' is not present in inventory or trusted discovery.")
+        if len(matches) != 1:
+            raise InventoryError(f"Host '{host}' has ambiguous trusted discovery provenance.")
+        record = matches[0]
 
         credential_target = inventory.resolve(record["credential_source"])
         return DeviceTarget(
@@ -181,6 +188,8 @@ class ArtifactStore:
         return metadata
 
     def read_artifact(self, run_id: str, artifact: str) -> str:
+        if not isinstance(run_id, str) or not re.fullmatch(r"[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}", run_id):
+            raise ArtifactError("Invalid run ID.")
         if artifact not in {"topology_json", "report_markdown", "drawio_xml"}:
             raise ArtifactError("Artifact must be topology_json, report_markdown, or drawio_xml.")
 
@@ -189,7 +198,9 @@ class ArtifactStore:
             "report_markdown": "report.md",
             "drawio_xml": "topology.drawio.xml",
         }
-        path = self.runs_dir / run_id / filenames[artifact]
+        path = (self.runs_dir / run_id / filenames[artifact]).resolve()
+        if not path.is_relative_to(self.runs_dir.resolve()):
+            raise ArtifactError("Artifact path must remain within the run directory.")
         if not path.exists():
             raise ArtifactError(f"Artifact not found: {run_id}/{artifact}")
         return path.read_text(encoding="utf-8")
