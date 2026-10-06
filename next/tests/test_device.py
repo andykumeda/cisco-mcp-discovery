@@ -162,3 +162,24 @@ def test_public_default_connection_factory_requires_explicit_opt_in(monkeypatch)
     monkeypatch.delenv('CISCO_MCP_ENABLE_SSH', raising=False)
     with pytest.raises(DeviceConnectionError, match='Live SSH is disabled'):
         DeviceClient._default_connection_factory()
+
+
+def test_persisted_discovery_keeps_seed_credentials_after_reload(tmp_path):
+    from cisco_mcp_server.inventory_update import InventoryUpdater
+    from cisco_mcp_server.storage import TrustedTargetStore
+    for suffix in ['ini', 'yml']:
+        path = tmp_path / ('inventory.' + suffix)
+        if suffix == 'ini':
+            path.write_text('[iosxe]\nseed ansible_host=192.0.2.10 ansible_user=fixture-user ansible_password=fixture-secret ansible_port=2222\n')
+        else:
+            path.write_text('all:\n  hosts:\n    seed:\n      ansible_host: 192.0.2.10\n      ansible_user: fixture-user\n      ansible_password: fixture-secret\n      ansible_port: 2222\n')
+        store = TrustedTargetStore(tmp_path / suffix)
+        store.add(name='neighbor', address='192.0.2.20', credential_source='seed', discovered_from='seed', protocol='cdp')
+        InventoryUpdater(path).add_discovered_host(name='neighbor', address='192.0.2.20', seed_name='seed', seed_address='192.0.2.10', discovered_from='seed', protocol='cdp')
+        client = DeviceClient(inventory=load_inventory(path), trusted_targets=store)
+        for host in ['neighbor', '192.0.2.20']:
+            target = client.resolve_target(host)
+            assert (target.username, target.password, target.port) == ('fixture-user', 'fixture-secret', 2222)
+            assert target.credential_source == 'seed'
+        assert client.resolve_target('seed').source == 'inventory'
+        assert 'fixture-secret' not in path.read_text().split('neighbor')[-1]

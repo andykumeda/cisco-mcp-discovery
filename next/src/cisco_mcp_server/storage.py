@@ -5,6 +5,7 @@ from __future__ import annotations
 import getpass
 import json
 import os
+import re
 import uuid
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -181,6 +182,8 @@ class ArtifactStore:
         return metadata
 
     def read_artifact(self, run_id: str, artifact: str) -> str:
+        if not isinstance(run_id, str) or not re.fullmatch(r"[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}", run_id):
+            raise ArtifactError("Invalid run ID.")
         if artifact not in {"topology_json", "report_markdown", "drawio_xml"}:
             raise ArtifactError("Artifact must be topology_json, report_markdown, or drawio_xml.")
 
@@ -189,7 +192,9 @@ class ArtifactStore:
             "report_markdown": "report.md",
             "drawio_xml": "topology.drawio.xml",
         }
-        path = self.runs_dir / run_id / filenames[artifact]
+        path = (self.runs_dir / run_id / filenames[artifact]).resolve()
+        if not path.is_relative_to(self.runs_dir.resolve()):
+            raise ArtifactError("Artifact path must remain within the run directory.")
         if not path.exists():
             raise ArtifactError(f"Artifact not found: {run_id}/{artifact}")
         return path.read_text(encoding="utf-8")

@@ -440,11 +440,11 @@ def _build_summary(
         }
     )
 
-    if statuses.get("show interfaces status") in {"ok", "disabled", "empty"}:
+    if statuses.get("show interfaces status") == "ok":
         interface_confidence = "available"
     else:
         interface_confidence = "missing"
-    if statuses.get("show mac address-table") in {"ok", "empty"}:
+    if statuses.get("show mac address-table") == "ok":
         mac_confidence = "available"
     else:
         mac_confidence = "missing"

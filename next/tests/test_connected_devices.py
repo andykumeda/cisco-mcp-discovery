@@ -124,3 +124,10 @@ Internet  203.0.113.2          0   00:11:22:33:44:55  ARPA   Vlan128
     assert arp_entries[0]["mac"] == "0011.2233.4455"
     assert normalize_mac("00-11-22-33-44-55") == "0011.2233.4455"
     assert normalize_interface("TenGigabitEthernet1/0/37") == normalize_interface("Te1/0/37")
+
+
+def test_empty_core_evidence_is_low_confidence():
+    batch = BatchResult(host='fixture', address='192.0.2.10', mode='exec', results=tuple(
+        CommandResult(command=c, output='') for c in CONNECTED_DEVICE_AUDIT_COMMANDS
+    ))
+    assert build_connected_device_audit(batch)['summary']['confidence'] == 'low'
