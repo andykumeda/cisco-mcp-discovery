@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+
+# Secrets and private operations data
+.env
+.env.*
+*.pem
+*.key
+*.pub
+id_rsa*
+id_ed25519*
+inventory.yml
+inventory.yaml
+inventory.ini
+!examples/inventory.yml
+!examples/inventory.yaml
+!examples/inventory.ini
+hosts
+group_vars/
+host_vars/
+
+# Runtime data and local MCP client configs
+artifacts/
+runs/
+logs/
+*.log
+command_audit.jsonl
+trusted_targets.json
+mcp-client*.json
+claude_desktop_config.json
+.vscode/mcp-settings.json
+
+# OS/editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

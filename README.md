@@ -2,6 +2,10 @@
 
 Independent project by Andy Kumeda; not an official Cisco product. Start with a seed host, collect CDP/LLDP neighbor evidence and device information, and generate an editable Draw.io topology for engineer review.
 
+## Which source to use
+
+The later recovered application is in [next/](next/README.md): batch sessions, richer discovery tables, endpoint audits and question-based investigations. Use it for future application development. The root package is the smaller, verified offline demo. These have different live-access policies; read the newer source’s limitations before use. Both remain in this single repository.
+
 ## Try the offline example
 
 Python 3.10 or newer. No packages, credentials or network access required:
