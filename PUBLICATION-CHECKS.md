@@ -26,3 +26,7 @@ Ten synthetic tests passed with MCP 1.30. They cover neighbor traversal, dedupli
 5. If actual sensitive data reaches a remote, stop publication and address remote history/caches as well as the working tree. A later deletion alone does not remove an earlier disclosure.
 
 The automated checks are focused controls, not a guarantee that an arbitrary future file is sanitized. Human review remains necessary for acronyms, contextual identifiers and non-text artifacts. No real customer artifacts are included in this publication.
+
+## Later recovered application
+
+A subsequent full archive inventory identified the newer source now in next/. Its original 34 source/document/test/example files remain in the private recovery archive, with hashes and no invented Git history. The public adaptation replaces private deployment/account/key references and non-documentation address literals, uses fictional examples, and defaults live Netmiko connections off. It passed 29 fixture/opt-in/SDK tests in addition to the ten root-demo tests. Full tracked-file and reachable-history checks apply to this directory too. `0.0.0.0` is allowed only as the protocol’s default-route/wildcard literal; it does not identify a customer host. The newer command/trust/inventory policies differ from the root app and are documented in next/docs/SECURITY.md; live use has not been validated.

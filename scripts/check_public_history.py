@@ -15,7 +15,7 @@ forbidden = {'hosts', 'README.INTERNAL.md', 'command_history.json', 'last_topolo
 key_pattern = re.compile(rb'-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----')
 issues = set()
 ip_pattern = re.compile(rb"(?<![0-9.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9.])")
-allowed_ranges = [ipaddress.ip_network(x) for x in ("192.0.2.0/24", "198.51.100.0/24", "203.0.113.0/24", "127.0.0.0/8")]
+allowed_ranges = [ipaddress.ip_network(x) for x in ("192.0.2.0/24", "198.51.100.0/24", "203.0.113.0/24", "127.0.0.0/8", "0.0.0.0/32")]
 def inspect_blob(path, data):
     if key_pattern.search(data):
         issues.add(path)
