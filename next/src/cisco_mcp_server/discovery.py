@@ -157,7 +157,9 @@ class DiscoveryEngine:
                     and len(visited) + len(queue) < max_devices
                 ):
                     discovered_target = self.trusted_targets.resolve(
-                        str(neighbor_address), self.device_client.inventory
+                        neighbor_name, self.device_client.inventory,
+                        address=str(neighbor_address), discovered_from=target.name,
+                        protocol=str(neighbor.get("protocol") or "unknown"),
                     )
                     discovered_id = _node_id(discovered_target)
                     if discovered_id not in visited and discovered_id not in queued:

@@ -11,4 +11,6 @@ Owner: Codex. Review: [PR #1](https://github.com/andykumeda/cisco-mcp-discovery/
 
 The four regression cases were checked against the prior implementation. Verification uses fixtures/fake connections, blocks socket connections, and includes the root offline demo and publication format/history scan. No equipment queried. Existing broader live-use limitations in SECURITY.md still apply.
 
-Release: follow-up PR pending CI and review. Private recovery sources and the ZTP interview demo remain unchanged.
+Release: [PR #2](https://github.com/andykumeda/cisco-mcp-discovery/pull/2). Initial CI passed; automated review identified shared-address alias selection, now covered by exact stored identity and provenance filtering plus a regression. Updated head awaits CI/review.
+
+Local verification: 34 expanded tests with connections blocked and ten root tests passed; root demo and publication format/history scan passed. Private recovery sources and the ZTP interview demo remain unchanged.

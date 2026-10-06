@@ -92,15 +92,21 @@ class TrustedTargetStore:
         self._write(records)
         return TrustedTargetRecord(**records[key])
 
-    def resolve(self, host: str, inventory: Inventory) -> DeviceTarget:
+    def resolve(self, host: str, inventory: Inventory, *, address: str | None = None,
+                discovered_from: str | None = None, protocol: str | None = None) -> DeviceTarget:
         records = self._read()
-        record = None
-        for item in records.values():
-            if item["name"] == host or item["address"] == host:
-                record = item
-                break
-        if record is None:
+        candidates = [item for item in records.values()
+                      if (address is None or item["address"] == address)
+                      and (discovered_from is None or item["discovered_from"] == discovered_from)
+                      and (protocol is None or item["protocol"] == protocol)]
+        matches = [item for item in candidates if item["name"] == host]
+        if not matches:
+            matches = [item for item in candidates if item["address"] == (address or host)]
+        if not matches:
             raise InventoryError(f"Host '{host}' is not present in inventory or trusted discovery.")
+        if len(matches) != 1:
+            raise InventoryError(f"Host '{host}' has ambiguous trusted discovery provenance.")
+        record = matches[0]
 
         credential_target = inventory.resolve(record["credential_source"])
         return DeviceTarget(

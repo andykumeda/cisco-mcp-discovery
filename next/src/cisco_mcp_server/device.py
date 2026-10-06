@@ -40,7 +40,12 @@ class DeviceClient:
         if target.vars.get("cisco_mcp_discovered_from_seed"):
             if self.trusted_targets is None:
                 raise InventoryError("Persisted discovery requires its trusted credential provenance.")
-            return self.trusted_targets.resolve(target.address, self.inventory)
+            return self.trusted_targets.resolve(
+                target.vars.get("cisco_mcp_trusted_target_name", target.name), self.inventory,
+                address=target.address,
+                discovered_from=target.vars.get("cisco_mcp_discovered_from_host"),
+                protocol=target.vars.get("cisco_mcp_discovery_protocol"),
+            )
         return target
 
     def run_command(self, host: str, command: str, timeout_seconds: int = 60) -> BatchResult:
